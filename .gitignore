@@ -1,0 +1,20 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django migrations cache
+*/migrations/__pycache__/
+*.sqlite3
+
+# Virtual environment
+venv/
+.env
+
+# Django static and media files (optional)
+staticfiles/
+media/
+
+# OS files
+.DS_Store
+
