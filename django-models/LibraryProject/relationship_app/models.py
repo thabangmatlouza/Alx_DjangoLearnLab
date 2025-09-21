@@ -18,7 +18,11 @@ class Book(models.Model):
             ("can_add_book", "Can add book"),
             ("can_change_book", "Can change book"),
             ("can_delete_book", "Can delete book"),
+            ("can_publish_book", "Can publish book"),
+            ("can_edit_book", "Can edit book"),
         ]
+
+        ordering = ['title']
 
     def __str__(self):
         return self.title
