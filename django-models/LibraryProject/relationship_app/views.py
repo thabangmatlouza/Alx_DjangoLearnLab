@@ -2,9 +2,11 @@ from django.shortcuts import render, redirect
 from django.views.generic.detail import DetailView
 from .models import Library
 from .models import Book
+from .models import UserProfile
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.decorators import login_required
 
 # Function-based view to list all books
@@ -47,3 +49,39 @@ def logout_view(request):
     logout(request)
     return render(request, "relationship_app/logout.html")
 
+def is_admin(user):
+    try:
+        return user.userprofile.role == UserProfile.ROLE_ADMIN
+    except Exception:
+        return False
+
+def is_librarian(user):
+    try:
+        return user.userprofile.role == UserProfile.ROLE_LIBRARIAN
+    except Exception:
+        return False
+
+def is_member(user):
+    try:
+        return user.userprofile.role == UserProfile.ROLE_MEMBER
+    except Exception:
+        return False
+
+# --- Role-restricted views ---
+@user_passes_test(is_admin, login_url='login')
+@login_required
+def admin_view(request):
+    # put admin-only context/data here
+    return render(request, "relationship_app/admin_view.html", {"user": request.user})
+
+@user_passes_test(is_librarian, login_url='login')
+@login_required
+def librarian_view(request):
+    # put librarian-only context/data here
+    return render(request, "relationship_app/librarian_view.html", {"user": request.user})
+
+@user_passes_test(is_member, login_url='login')
+@login_required
+def member_view(request):
+    # put member-only context/data here
+    return render(request, "relationship_app/member_view.html", {"user": request.user})
