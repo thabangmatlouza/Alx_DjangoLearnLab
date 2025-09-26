@@ -1,18 +1,25 @@
+# @permission_required decorators enforce access:
+# Editors -> can_create, can_edit
+# Viewers -> can_view
+# Admins -> all permissions
+
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Book
 from .forms import BookForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 
 # Home page
 def home(request):
     return render(request, 'bookshelf/home.html')
 
-# Book-related views
+@permission_required('bookshelf.can_view', raise_exception=True)
 def list_books(request):
     books = Book.objects.all()
     return render(request, 'bookshelf/list_books.html', {'books': books})
 
+@permission_required('bookshelf.can_edit', raise_exception=True)
 def edit_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
     if request.method == 'POST':
