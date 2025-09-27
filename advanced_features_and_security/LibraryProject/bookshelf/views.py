@@ -5,12 +5,11 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Book
-from .forms import BookForm
+from .forms import BookForm, ExampleForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 from .forms import BookSearchForm
-from .forms import ExampleForm
 
 # Home page
 def home(request):

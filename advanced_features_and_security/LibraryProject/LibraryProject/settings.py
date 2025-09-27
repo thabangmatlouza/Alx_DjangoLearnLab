@@ -40,19 +40,37 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in ("1", "true", "yes")
 # Hosts allowed to serve the site (replace with your host(s) in production)
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
+# =========================
+# Django Security Settings
+# =========================
+
 # Security headers & cookies
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') # If behind a reverse proxy (like Nginx), use this so Django knows it's HTTPS
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"                 # or "SAMEORIGIN" if you need embedding
+
+# --------------------------------------------------------------------------------
+# Secure Cookies
+# --------------------------------------------------------------------------------
+
 CSRF_COOKIE_SECURE = True               # send CSRF cookie only over HTTPS (prod)
 SESSION_COOKIE_SECURE = True            # session cookie only over HTTPS (prod)
 CSRF_COOKIE_SAMESITE = "Lax"            # or "Strict" depending on your UX
 SESSION_COOKIE_SAMESITE = "Lax"
 
-# HSTS (HTTP Strict Transport Security) — enable only after you have HTTPS set up
-SECURE_HSTS_SECONDS = 60                # start low while testing; raise after verifying
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = False
+# Redirect all HTTP requests to HTTPS
+SECURE_SSL_REDIRECT = True # Automatically redirect HTTP → HTTPS
+
+# --------------------------------------------------------------------------------
+# HTTPS / SSL Settings
+# --------------------------------------------------------------------------------
+
+# HSTS (HTTP Strict Transport Security)
+# Instructs browsers to only access this site via HTTPS for the next 31536000 seconds (1 year)
+SECURE_HSTS_SECONDS = 31536000               
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True # Apply HSTS to all subdomains
+SECURE_HSTS_PRELOAD = True # Allow inclusion in browser preload lists
 
 # Content Security Policy: if using django-csp, see section below
 # (Do NOT disable CSP while testing; configure it to your needs)
