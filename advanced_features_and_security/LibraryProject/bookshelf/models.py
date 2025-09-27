@@ -32,7 +32,8 @@ class CustomUser(AbstractUser):
     date_of_birth = models.DateField(null=True, blank=True)
     profile_photo = models.ImageField(upload_to="profile_photos/", null=True, blank=True)
 
-    object = CustomUserManager()
+    objects = CustomUserManager()  # ✅ FIXED
+
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
@@ -49,3 +50,4 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+

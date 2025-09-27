@@ -21,7 +21,7 @@ from bookshelf import views  # or wherever your homepage view is
 urlpatterns = [
     path('', views.home, name='home'),  # <-- add this
     path('admin/', admin.site.urls),
-    path('books/', views.list_books, name='list_books'),
+    path('books/', views.book_list, name='list_books'),
     path('library/<int:pk>/', views.library_detail, name='library_detail'),
     path('register/', views.register, name='register'),
     path('login/', views.login_view, name='login'),

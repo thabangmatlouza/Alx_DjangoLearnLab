@@ -22,6 +22,42 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-cf40xu&ty#z6=u9-jcw1cmonzdf)p8zghyczhgz6_9_$$5*98!'
 
+import os
+from django.core.exceptions import ImproperlyConfigured
+
+def get_env(key, default=None):
+    val = os.environ.get(key, default)
+    if val is None:
+        raise ImproperlyConfigured(f"Missing env var: {key}")
+    return val
+
+# SECRET_KEY — load from env for production
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "changeme-local-only")
+
+# DEBUG — set to False in production
+DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in ("1", "true", "yes")
+
+# Hosts allowed to serve the site (replace with your host(s) in production)
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+
+# Security headers & cookies
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"                 # or "SAMEORIGIN" if you need embedding
+CSRF_COOKIE_SECURE = True               # send CSRF cookie only over HTTPS (prod)
+SESSION_COOKIE_SECURE = True            # session cookie only over HTTPS (prod)
+CSRF_COOKIE_SAMESITE = "Lax"            # or "Strict" depending on your UX
+SESSION_COOKIE_SAMESITE = "Lax"
+
+# HSTS (HTTP Strict Transport Security) — enable only after you have HTTPS set up
+SECURE_HSTS_SECONDS = 60                # start low while testing; raise after verifying
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = False
+
+# Content Security Policy: if using django-csp, see section below
+# (Do NOT disable CSP while testing; configure it to your needs)
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -46,6 +82,7 @@ AUTH_USER_MODEL = "bookshelf.CustomUser"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'csp.middleware.CSPMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -55,6 +92,14 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'LibraryProject.urls'
+
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'",)  # add CDNs like "https://cdnjs.cloudflare.com" if needed
+CSP_STYLE_SRC = ("'self'", "https://fonts.googleapis.com")
+CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com")
+CSP_IMG_SRC = ("'self'", "data:")
+CSP_CONNECT_SRC = ("'self'",)
+
 
 TEMPLATES = [
     {

@@ -9,6 +9,7 @@ from .forms import BookForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
+from .forms import BookSearchForm
 
 # Home page
 def home(request):
@@ -18,6 +19,15 @@ def home(request):
 def book_list(request):
     books = Book.objects.all()
     return render(request, 'bookshelf/list_books.html', {'books': books})
+
+def book_list(request):
+    form = BookSearchForm(request.GET)
+    qs = Book.objects.all()
+    if form.is_valid():
+        q = form.cleaned_data.get('q')
+        if q:
+            qs = qs.filter(title__icontains=q)  # safe ORM usage
+    return render(request, 'bookshelf/book_list.html', {'books': qs, 'form': form})
 
 @permission_required('bookshelf.can_edit', raise_exception=True)
 def edit_book(request, pk):
