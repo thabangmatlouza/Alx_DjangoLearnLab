@@ -10,6 +10,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 from .forms import BookSearchForm
+from .forms import ExampleForm
 
 # Home page
 def home(request):
