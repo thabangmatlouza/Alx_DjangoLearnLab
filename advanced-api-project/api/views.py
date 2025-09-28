@@ -1,3 +1,4 @@
+from django_filters import rest_framework
 from django.shortcuts import render
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
