@@ -57,15 +57,16 @@ MIDDLEWARE = [
 ]
 
 # Useful auth settings
-LOGIN_REDIRECT_URL = '/'           # where to go after login
-LOGOUT_REDIRECT_URL = '/'          # where to go after logout
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'post-list'           # where to go after login
+LOGOUT_REDIRECT_URL = 'post-list'          # where to go after logout
 
 ROOT_URLCONF = 'django_blog.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],
+        'DIRS': [BASE_DIR /"blog" / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

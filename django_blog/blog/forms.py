@@ -1,4 +1,5 @@
 from django import forms
+from .models import Post
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 from .models import Profile
@@ -17,3 +18,11 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ("bio", "profile_photo")
 
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'content']  # author and published_date set automatically
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 10}),
+        }

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}All Posts{% endblock %}
+
+{% block content %}
+  <h2>All Blog Posts</h2>
+  <ul>
+    {% for post in object_list %}
+      <li>
+        <a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a>
+        <p>{{ post.content|truncatewords:20 }}</p>
+        <small>Published on {{ post.published_date }} by {{ post.author.username }}</small>
+      </li>
+    {% empty %}
+      <p>No posts available.</p>
+    {% endfor %}
+  </ul>
+
+  {% if user.is_authenticated %}
+    <a href="{% url 'post-create' %}" class="btn">Create New Post</a>
+  {% else %}
+    <p><a href="{% url 'login' %}">Login</a> to create a post.</p>
+  {% endif %}
+{% endblock %}
+
