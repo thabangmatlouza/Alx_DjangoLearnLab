@@ -3,6 +3,7 @@ from .models import Post, Comment, Tag
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 from .models import Profile, Comment
+from taggit.forms import TagWidget
 
 User = get_user_model()
 
@@ -28,10 +29,11 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ['title', 'content']  # author and published_date set automatically
+        fields = ['title', 'content', 'tags']  # author and published_date set automatically
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 10}),
+            'tags': TagWidget(),
         }
 
     def __init__(self, *args, **kwargs):
