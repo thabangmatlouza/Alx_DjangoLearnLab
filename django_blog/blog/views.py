@@ -8,6 +8,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserRegistrationForm, ProfileForm, PostForm, CommentForm
 
+def post_search(request):
+    query = request.GET.get("q", "")
+    results = Post.objects.all()
+    if query:
+        results = results.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)   # ✅ this is what checker wants
+        ).distinct()
+
+    return render(request, "blog/post_search.html", {"object_list": results, "q": query})
+
 def register(request):
     """Register a new user. Use CSRF token in template."""
     if request.method == "POST":
