@@ -20,13 +20,6 @@ class ProfileForm(forms.ModelForm):
         fields = ("bio", "profile_photo")
 
 class PostForm(forms.ModelForm):
-
-    tags_field = forms.CharField(
-        required=False,
-        label='Tags (comma separated)',
-        widget=forms.TextInput(attrs={'placeholder': 'e.g. django, python, tips'})
-    )
-
     class Meta:
         model = Post
         fields = ['title', 'content', 'tags']  # author and published_date set automatically
