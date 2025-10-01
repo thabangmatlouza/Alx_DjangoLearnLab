@@ -152,11 +152,11 @@ def search_posts(request):
 class PostsByTagView(ListView):
     model = Post
     template_name = "blog/posts_by_tag.html"  # create this template
-    context_object_name = "posts"
+    context_object_name = "object_list"
 
     def get_queryset(self):
-        tag_name = self.kwargs['tag_name']
-        return Post.objects.filter(tags__name__iexact=tag_name)
+        tag_slug  = self.kwargs["tag_slug"]
+        return Post.objects.filter(tags__slug=tag_slug)
 
 class PostSearchView(ListView):
     model = Post
