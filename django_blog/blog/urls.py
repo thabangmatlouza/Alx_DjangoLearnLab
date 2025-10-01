@@ -32,10 +32,10 @@ urlpatterns  = [
 
 
     # Tagging
-    path('tags/<slug:tag_slug>/', views.PostsByTagView.as_view(), name='posts-by-tag'),
+    path('tags/<slug:tag_slug>/', PostByTagView.as_view(), name='posts-by-tag'),
 
     # Search
-    path('search/', views.PostSearchView.as_view(), name='post-search'),
+    path('search/', PostSearchView.as_view(), name='post-search'),
 
 ]
 
