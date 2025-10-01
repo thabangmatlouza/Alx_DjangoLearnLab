@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Post, Comment
+from .models import Post, Comment, Tag
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import UserRegistrationForm, ProfileForm, PostForm
+from .forms import UserRegistrationForm, ProfileForm, PostForm, CommentForm
 
 def register(request):
     """Register a new user. Use CSRF token in template."""
@@ -38,6 +39,23 @@ class PostListView(ListView):
     template_name = "blog/post_list.html"
     context_object_name = "posts"
     paginate_by = 10
+    def get_queryset(self):
+        qs = super().get_queryset()
+        q = self.request.GET.get('q', '').strip()
+        tag = self.request.GET.get('tag', '').strip()
+        if q:
+            # search title or content (case-insensitive)
+            qs = qs.filter(Q(title__icontains=q) | Q(content__icontains=q)).distinct()
+        if tag:
+            qs = qs.filter(tags__name__iexact=tag)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['q'] = self.request.GET.get('q', '')
+        ctx['tag'] = self.request.GET.get('tag', '')
+        ctx['all_tags'] = Tag.objects.all()
+        return ctx
 
 # Public: single post
 class PostDetailView(DetailView):
@@ -106,3 +124,42 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return self.object.post.get_absolute_url()
+
+def posts_by_tag(request, tag_name):
+    posts = Post.objects.filter(tags__name__iexact=tag_name)
+    return render(request, 'blog/post_list.html', {'posts': posts, 'tag': tag_name, 'all_tags': Tag.objects.all()})
+
+def search_posts(request):
+    q = request.GET.get('q', '')
+    posts = Post.objects.none()
+    if q:
+        posts = Post.objects.filter(Q(title__icontains=q) | Q(content__icontains=q)).distinct()
+    return render(request, 'blog/post_list.html', {'posts': posts, 'q': q, 'all_tags': Tag.objects.all()})
+
+
+class PostsByTagView(ListView):
+    model = Post
+    template_name = "blog/posts_by_tag.html"  # create this template
+    context_object_name = "posts"
+
+    def get_queryset(self):
+        tag_name = self.kwargs['tag_name']
+        return Post.objects.filter(tags__name__iexact=tag_name)
+
+class PostSearchView(ListView):
+    model = Post
+    template_name = 'post_list.html'
+    context_object_name = 'object_list'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        if query:
+            return Post.objects.filter(
+                Q(title__icontains=query) | Q(content__icontains=query)
+            ).distinct()
+        return Post.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['q'] = self.request.GET.get('q', '')
+        return context
